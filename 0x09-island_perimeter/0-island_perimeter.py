@@ -41,3 +41,4 @@ def island_perimeter(grid):
                 ):  # Checking the right
                     perimeter += 1
     return perimeter
+

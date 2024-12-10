@@ -1,15 +1,26 @@
 #!/usr/bin/python3
 """
-Main file for testing
+Validate UTF-8
 """
 
-validUTF8 = __import__('0-validate_utf8').validUTF8
 
-data = [65]
-print(validUTF8(data))
+def validUTF8(data):
+    """Determine if a given data
+    set represents a valid UTF-8 encoding
+    """
 
-data = [80, 121, 116, 104, 111, 110, 32, 105, 115, 32, 99, 111, 111, 108, 33]
-print(validUTF8(data))
-
-data = [229, 65, 127, 256]
-print(validUTF8(data))
+    bytes = 0
+    for n in data:
+        byte = format(n, '#010b')[-8:]
+        if bytes == 0:
+            if byte[0] == '1':
+                bytes = len(byte.split('0')[0])
+            if bytes > 4 or bytes == 1:
+                return False
+            if bytes == 0:
+                continue
+        else:
+            if not byte.startswith('10'):
+                return False
+        bytes -= 1
+    return bytes == 0

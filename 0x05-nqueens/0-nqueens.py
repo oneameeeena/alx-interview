@@ -1,54 +1,47 @@
 #!/usr/bin/python3
+"""N queens puzzle"""
+
 import sys
 
-def print_solution(board):
-    """Prints the solution in the required format."""
-    solution = []
-    for row in range(len(board)):
-        for col in range(len(board)):
-            if board[row] == col:
-                solution.append([row, col])
-    print(solution)
 
-def is_safe(board, row, col):
-    """Check if placing a queen on board[row][col] is safe."""
-    for i in range(row):
-        if board[i] == col or \
-           board[i] - i == col - row or \
-           board[i] + i == col + row:
+def isSafe(board, row, col):
+    """Check if a queen can be placed on board[row][col]"""
+    for i in range(col):
+        if board[i] == row or \
+           board[i] == row - col + i or \
+           board[i] == row + col - i:
             return False
     return True
 
-def solve_nqueens(board, row):
-    """Uses backtracking to solve the N-Queens problem."""
-    if row == len(board):
-        print_solution(board)
+
+def solveNQUtil(board, col):
+    """Use backtracking to solve the N queens puzzle"""
+    n = len(board)
+    if col == n:
+        print(str([[i, board[i]] for i in range(n)]))
         return
+    for i in range(n):
+        if isSafe(board, i, col):
+            board[col] = i
+            solveNQUtil(board, col + 1)
 
-    for col in range(len(board)):
-        if is_safe(board, row, col):
-            board[row] = col
-            solve_nqueens(board, row + 1)
-            board[row] = -1
 
-def main():
+def nqueens(n):
+    """Initialize the board and call solveNQUtil()"""
+    board = [-1 for _ in range(n)]
+    solveNQUtil(board, 0)
+
+
+if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
-
     try:
-        N = int(sys.argv[1])
+        n = int(sys.argv[1])
     except ValueError:
         print("N must be a number")
         sys.exit(1)
-
-    if N < 4:
+    if n < 4:
         print("N must be at least 4")
         sys.exit(1)
-
-    board = [-1] * N
-    solve_nqueens(board, 0)
-
-if __name__ == "__main__":
-    main()
-
+    nqueens(n)

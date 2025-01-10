@@ -1,17 +1,27 @@
 #!/usr/bin/node
 
 const request = require('request');
+const util = require('util');
 
-request('https://swapi-api.hbtn.io/api/films/' + process.argv[2], function (err, res, body) {
-  if (err) throw err;
-  const actors = JSON.parse(body).characters;
-  exactOrder(actors, 0);
-});
-const exactOrder = (actors, x) => {
-  if (x === actors.length) return;
-  request(actors[x], function (err, res, body) {
-    if (err) throw err;
-    console.log(JSON.parse(body).name);
-    exactOrder(actors, x + 1);
-  });
-};
+const requestPromise = util.promisify(request);
+
+async function getData() {
+        try {
+                let data = await requestPromise('https://swapi-api.alx-tools.com/api/films/' + process.argv[2]);
+                let dtBody = JSON.parse(data.body);
+
+                for (let i in dtBody.characters)
+                        request(dtBody.characters[i], (err, body, response) => {
+
+                                console.log(JSON.parse(body.body).name);
+                        });
+
+        } catch (err) {
+                console.log(err);
+        }
+
+
+}
+
+getData();
+
